@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardápio Fit – Sabor Caseiro Mossoró</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #5a9e1a;
+    --verde-escuro: #3a6e10;
+    --verde-claro: #8cc63f;
+    --laranja: #e84b12;
+    --laranja-claro: #f07840;
+    --creme: #fdf8f0;
+    --marrom: #3d2b1f;
+    --cinza: #f5f0e8;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }  
+
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+  }
+
+  body {
+    background-color: var(--creme);
+    font-family: 'Lato', sans-serif;
+    color: var(--marrom);
+  }
+
+  /* ===== CAPA COM SLIDESHOW ===== */
+  .capa {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #1a4a05 0%, #2e7a0a 40%, #5a9e1a 80%, #8cc63f 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 60px 40px;
+  }
+
+  .capa-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+    z-index: 2;
+  }
+
+  .capa-logo, .capa p, .capa h1, .capa-badge, .leaf-deco {
+    position: relative;
+    z-index: 3;
+  }
+
+  .capa::before, .capa::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    z-index: 3;
+  }
+  .capa::before { top: -80px; right: -80px; width: 400px; height: 400px; }
+  .capa::after { bottom: -60px; left: -60px; width: 300px; height: 300px; }
+
+  .capa-bg-slider { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+  .bg-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.8s ease-in-out; }
+  .bg-slide.ativo { opacity: 0.95; }
+
+  .capa-logo {
+    width: 200px; height: 200px; border-radius: 50%; background: white; padding: 5px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3); margin-bottom: 36px; display: flex;
+    align-items: center; justify-content: center; animation: float 4s ease-in-out infinite; overflow: hidden;
+  }
+
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  .capa-logo img { width: 105%; height: 105%; object-fit: contain; }
+  .capa h1 { font-family: 'Dancing Script', cursive; font-size: 72px; color: white; text-shadow: 0 4px 20px rgba(0,0,0,0.3); line-height: 1; margin-bottom: 10px; }
+  .capa .subtitle { font-family: 'Lato', sans-serif; font-size: 18px; color: rgba(255,255,255,0.8); letter-spacing: 6px; text-transform: uppercase; margin-bottom: 10px; }
+  .capa .tagline { font-family: 'Playfair Display', serif; font-size: 22px; color: #d4f0a0; font-style: italic; margin-bottom: 40px; }
+
+  .capa-badge { display: inline-flex; align-items: center; gap: 10px; background: var(--laranja); color: white; padding: 12px 30px; border-radius: 40px; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 8px 24px rgba(232,75,18,0.4); }
+
+  .leaf-deco { position: absolute; font-size: 80px; opacity: 0.08; }
+  .leaf-deco.tl { top: 40px; left: 40px; transform: rotate(-30deg); }
+  .leaf-deco.tr { top: 40px; right: 40px; transform: rotate(30deg); }
+  .leaf-deco.bl { bottom: 40px; left: 40px; transform: rotate(20deg); }
+  .leaf-deco.br { bottom: 40px; right: 40px; transform: rotate(-20deg); }
+  
+  /* ===== PÁGINAS DE CARDÁPIO ===== */
+  .pagina { max-width: 900px; margin: 0 auto; padding: 60px 20px; }
+  .pagina-header { display: flex; align-items: center; gap: 20px; margin-bottom: 40px; }
+  .pagina-header .mini-logo { width: 75px; height: 75px; border-radius: 50%; background: white; padding: 3px; box-shadow: 0 4px 16px rgba(90,158,26,0.2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .pagina-header .mini-logo img { width: 105%; height: 105%; object-fit: contain; }
+  .pagina-header h2 { font-family: 'Playfair Display', serif; font-size: 36px; color: var(--verde-escuro); }
+  .pagina-header p { color: var(--laranja); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; }
+
+  /* ===== GRID DE PRATOS CORRIGIDO ===== */
+  .pratos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  /* --- CARD ETIQUETA ARTESANAL MODERNA --- */
+  .prato-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: visible; /* Necessário para as cantoneiras decorativas aparecerem */
+    transition: all 0.3s ease;
+    border: 2px solid #e0dcd5; /* Borda da moldura estilo etiqueta */
+    display: flex; 
+    flex-direction: column;
+    padding: 0 !important; 
+    margin: 20px !important; /* Espaço para a decoração */
+  }
+
+  /* Cantoneiras decorativas (Inspiradas na moldura de flores) */
+  .prato-card::before {
+    content: '';
+    position: absolute;
+    top: -10px; left: -10px;
+    width: 35px; height: 35px;
+    border-top: 5px solid var(--verde-escuro);
+    border-left: 5px solid var(--verde-escuro);
+    border-radius: 10px 0 0 0;
+    pointer-events: none;
+  }
+  
+  .prato-card::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; right: -10px;
+    width: 35px; height: 35px;
+    border-bottom: 5px solid var(--verde-escuro);
+    border-right: 5px solid var(--verde-escuro);
+    border-radius: 0 0 10px 0;
+    pointer-events: none;
+  }
+
+  .prato-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    border-color: var(--verde-escuro);
+  }
+
+  .prato-foto-container { width: 100%; line-height: 0; }
+  .prato-foto-container img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px 10px 0 0; }
+
+  /* ETIQUETA COM FUNDO PROTETOR PARA LEITURA */
+  .etiqueta-conteudo {
+    padding: 20px !important;
+    background: rgba(255, 255, 255, 0.85); /* Fundo branco suave para isolar as flores e dar leitura */
+    border-radius: 10px; /* Curva leve para combinar com o card */
+    margin: 10px; /* Margem pequena para a moldura de flores aparecer nas bordas */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+
+  .etiqueta-header {
+    border-bottom: 2px dashed var(--verde-escuro);
+    padding-bottom: 8px;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+
+  .prato-nome { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 22px; 
+    color: var(--verde-bandeira, #008000) !important; /* Força o uso do verde vibrante */
+    line-height: 1.2; 
+    font-weight: 800; /* Reduzi levemente de 900 para 800 para a cor "respirar" melhor no celular */
+    text-align: center; 
+  }
+
+
+  .prato-acomp { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .prato-acomp span { 
+    background: rgba(90, 158, 26, 0.1); 
+    color: var(--verde-escuro); 
+    padding: 5px 12px; 
+    border-radius: 20px; 
+    font-size: 11px; 
+    text-transform: uppercase; 
+    font-weight: 700; 
+  }
+
+  /* CONTROLES DE QUANTIDADE */
+  .seletor-pedido { 
+    display: flex; align-items: center; justify-content: center; gap: 14px; 
+    margin-top: auto; border: 1px solid #e0dcd5 !important;
+    padding: 8px !important; border-radius: 8px; background: white;
+  }
+  .btn-qtd { 
+    background: var(--verde-escuro) !important; color: white; border: none; 
+    width: 32px !important; height: 32px !important; border-radius: 50% !important; 
+    font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .btn-qtd:active { transform: scale(0.9); }
+  .numero-qtd { font-family: 'Montserrat', sans-serif; font-weight: bold; font-size: 16px; min-width: 24px; text-align: center; color: var(--marrom); }
+
+  /* EFEITOS DE ESTADO */
+  .prato-card.selecionado { border: 2px solid var(--laranja) !important; }
+
+  /* PADRONIZAÇÃO INDISPONÍVEL */
+  .prato-card.indisponivel { opacity: 0.6; filter: grayscale(0.5); }
+  .prato-card.indisponivel .etiqueta-header { border-bottom: 2px dashed #dc3545; }
+  .prato-card.indisponivel .btn-qtd { background: #bbb !important; }
+
+  /* BANNER INÍCIO */
+  .banner-inicio-container { width: 90%; max-width: 400px; margin: 20px auto; height: 180px; overflow: hidden; border-radius: 16px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); }
+  .banner-inicio-img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ===== BOTÃO VOLTAR AO TOPO ===== */
+  .btn-subir { position: fixed; bottom: 25px; right: 25px; width: 45px; height: 45px; background-color: var(--laranja); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); z-index: 9999; font-size: 20px; font-weight: bold; transition: transform 0.2s ease; }
+  .btn-subir:active { transform: scale(0.9); }
+
+  /* ===== BARRA FIXA DO CARRINHO ===== */
+  .barra-carrinho-fixa { position: fixed; bottom: 12px; left: 16px; transform: none; width: calc(100% - 90px); max-width: 310px; height: 52px; background: var(--laranja); color: white; padding: 0 12px; border-radius: 14px; display: none; align-items: center; justify-content: space-between; box-shadow: 0 5px 15px rgba(213,77,26,0.3); z-index: 9998; font-family: sans-serif; }
+  .barra-carrinho-fixa span { font-size: 13px !important; line-height: 1.2; }
+  .btn-enviar-whats { background: white; color: var(--laranja); border: none; height: 36px; padding: 0 10px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: auto; max-width: 105px; margin-right: 0; white-space: nowrap; }
+
+  /* ===== COMPATIBILIDADE EXTRA DE ÍCONES ===== */
+  .icons-row { display: flex; gap: 6px; margin-top: 10px; justify-content: center; }
+  .icon-tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+  .icon-tag.fit { background: #e8f5d0; color: var(--verde-escuro); }
+  .icon-tag.proteina { background: #fff0eb; color: var(--laranja); }
+  .icon-tag.regional { background: #fff8e0; color: #b87c00; }
+  .icon-tag.peixe { background: #e0f4ff; color: #0077aa; }
+
+  /* ===== RODAPÉ ===== */
+  .rodape { background: var(--verde-escuro); color: white; text-align: center; padding: 40px; page-break-before: always; }
+  .rodape-logo { width: 95px; height: 95px; border-radius: 50%; background: white; padding: 4px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .rodape-logo img { width: 105%; height: 105%; object-fit: contain; }
+  .rodape h3 { font-family: 'Dancing Script', cursive; font-size: 36px; color: #d4f0a0; margin-bottom: 8px; }
+  .rodape p { font-size: 14px; color: rgba(255,255,255,0.7); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+  .rodape-info { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; font-size: 14px; color: rgba(255,255,255,0.85); }
+  .rodape-info div { display: flex; align-items: center; gap: 8px; }
+  .divider { width: 60px; height: 3px; background: var(--laranja); margin: 16px auto; border-radius: 2px; }
+
+  /* ===== PÁGINA ESPECIAL - DESTAQUE ===== */
+  .secao-titulo { text-align: center; margin-bottom: 40px; }
+  .secao-titulo h3 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--verde-escuro); margin-bottom: 6px; }
+  .secao-titulo .linha { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--laranja); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; }
+  .secao-titulo .linha::before, .secao-titulo .linha::after { content: ''; width: 60px; height: 2px; background: var(--laranja-claro); }
+
+  @media print { .capa, .pagina, .rodape { page-break-after: always; } }
+  
+  @media (max-width: 600px) {
+    .pratos-grid { grid-template-columns: 1fr; gap: 20px; }
+    .capa h1 { font-size: 48px; }
+    .pagina { padding: 30px 20px; }
+  }
+  
+  html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+}
+
+</style>
+
+</head>
+<body>
+<div id="topo"></div>
+
+
+<!-- ===== CAPA COM FUNDO DINÂMICO ===== -->
+<div class="capa">
+  <!-- 1. CAMADA DE COR E SELEÇÃO DE IMAGENS DE FUNDO -->
+  <div class="capa-overlay"></div>
+  <div class="capa-bg-slider">
+    <!-- Slide 1: Começa mostrando apenas o seu gradiente verde original -->
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="bg-slide ativo" alt="Fundo Base">
+    <!-- Slide 2: Sua foto com a mão segurando a marmita em destaque -->
+    <img src="Marmitas-Fit-Aline-Miu.jpeg" class="bg-slide" alt="Kits de Marmitas Fit">
+    <!-- Slide 3: Sua foto com foco nos detalhes de almôndegas e cenouras -->
+    <img src="images (19).jpeg" class="bg-slide" alt="Marmitas Saudáveis Sabor Caseiro">
+    <!-- Slide 4: Sua foto mostrando a variedade de legumes e cores -->
+    <img src="images (20).jpeg" class="bg-slide" alt="Variedade de Purês e Legumes">
+    <!-- Slide 5: Sua foto com a mesa cheia de opções de frango, carne e brócolis -->
+    <img src="images (21).jpeg" class="bg-slide" alt="Cardápio Semanal Fit">
+  </div>
+
+  <!-- 2. ELEMENTOS DECORATIVOS E TEXTOS ORIGINAIS (MANTIDOS INTACTOS) -->
+  <span class="leaf-deco tl">🌿</span>
+  <span class="leaf-deco tr">🌱</span>
+  <span class="leaf-deco bl">🍃</span>
+  <span class="leaf-deco br">🌿</span>
+
+  <div class="capa-logo">
+    <img src="logo.jpg" alt="Logo Sabor Caseiro">
+  </div>
+
+  <p style="display: flex; align-items: center; justify-content: center; gap: 8px; color: rgba(255,255,255,0.9); font-weight: bold; letter-spacing: 1px; margin-top: -20px; margin-bottom: 25px; font-size: 16px;">
+    <img src="insta.jpg" style="width: 20px; height: 20px; border-radius: 4px; object-fit: cover;" alt="Instagram"> @saborcaseiro_mossoro
+  </p>
+
+  <p class="subtitle">CARDÁPIO FIT</p>
+  <h1>Sabor Caseiro</h1>
+  <p class="tagline">Alimentação saudável com sabor da casa</p>
+
+  <a href="#cardapio" style="text-decoration: none; display: block; width: 100%; cursor: pointer;">
+    <div class="capa-badge" style="cursor: pointer;">
+      🥗 Monte o seu kit de marmitas fit logo abaixo ⬇️
+    </div>
+  </a>
+</div>
+
+
+
+<!-- ===== PÁGINA 1: Opções 1–10 ===== -->
+<div class="pagina">
+  
+  <!-- CABEÇALHO SUPERIOR SUPER LIMPO -->
+  <div class="pagina-header" style="display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; box-sizing: border-box !important; transform: none !important; margin-bottom: 30px !important; padding: 10px 0 !important;">
+    
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="mini-logo" style="margin: 0 !important; flex-shrink: 0;">
+        <img src="logo.jpg" alt="Logo">
+      </div>
+      <div>
+        <span style="color: var(--laranja); font-size: 16px; letter-spacing: 2px; text-transform: uppercase; font-weight: 900; display: block;">CARDÁPIO FIT</span>
+      </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--verde-escuro); background: #ffffff; padding: 6px 12px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); flex-shrink: 0;">
+      <img src="insta.jpg" style="width: 16px; height: 16px; border-radius: 4px; object-fit: cover;" alt="Instagram">
+      <span>@saborcaseiro_mossoro</span>
+    </div>
+
+  </div>
+
+<!-- VEJA A ID="CARDAPIO" ADICIONADA NA LINHA ABAIXO -->
+<div id="cardapio" style="margin: 15px 0 25px 0; padding: 15px; background: #fff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px solid var(--laranja, #ff5722); text-align: center;">
+  <label for="kit-selecionado" style="display: block; font-weight: bold; color: #333; margin-bottom: 8px; font-size: 15px;">
+    🎯 Passo 1: Escolha o seu Kit Fit
+  </label>
+  <select id="kit-selecionado" onchange="MudarDeKit()" style="width: 100%; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 8px; border: 1px solid #ccc; background: #fdfdfd; color: #333; outline: none; cursor: pointer;">
+    <option value="10" selected>Kit 10 Marmitas — R$ 150,00 (R$ 15,00/un)</option>
+    <option value="15">Kit 15 Marmitas — R$ 217,50 (R$ 14,50/un)</option>
+    <option value="30">Kit 30 Marmitas — R$ 420,00 (R$ 14,00/un)</option>
+  </select>
+  <p style="margin: 8px 0 0 0; font-size: 12px; color: #666; font-weight: 500;">Após selecionar o kit, monte as suas opções de pratos logo abaixo.</p>
+</div>
+
+
+<!-- MENU DE ATALHOS - ESTILO MINIMALISTA PROFISSIONAL -->
+<section id="menu-atalhos" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 15px; margin-bottom: 25px;">
+  
+  <style>
+    .btn-cat { 
+      padding: 10px 20px; 
+      border: 1px solid #d4d0c9; 
+      border-radius: 20px; 
+      text-decoration: none; 
+      color: var(--verde-escuro); 
+      font-weight: 600; 
+      font-size: 14px;
+      transition: all 0.3s ease;
+      background: #fdfaf5;
+    }
+    .btn-cat:hover, .btn-cat:active { 
+      background: var(--verde-escuro); 
+      color: #fff; 
+      border-color: var(--verde-escuro);
+    }
+  </style>
+
+  <a href="#carnes" class="btn-cat">Carnes</a>
+  <a href="#frangos" class="btn-cat">Frangos</a>
+  <a href="#peixes" class="btn-cat">Peixes</a>
+  <a href="#bebidas" class="btn-cat">Bebidas</a>
+  <a href="#saladas" class="btn-cat">Saladas</a>
+</section>
+
+<!-- SEÇÃO DINÂMICA (Onde o conteúdo continua carregando normalmente) -->
+<div id="categorias-container">
+</div>
+
+
+
+  <!-- INÍCIO DOS PRATOS (Limpo e sem repetições) -->
+  <div class="pratos-grid" id="pratos-container">
+    <!-- O JavaScript vai injetar os 36 pratos aqui dentro automaticamente -->
+  </div>
+
+</div> <!-- Fecha a div da página principal -->
+
+
+<!-- ===== RODAPÉ ===== -->
+<div class="rodape">
+  <div class="rodape-logo">
+    <img src="logo.jpg" alt="Logo Sabor Caseiro">
+  </div>
+  
+  <p style="display: flex; align-items: center; justify-content: center; gap: 6px; color: #d4f0a0; font-weight: bold; margin-top: -10px; margin-bottom: 15px; font-size: 15px;">
+    <img src="insta.jpg" style="width: 18px; height: 18px; border-radius: 4px; object-fit: cover;" alt="Instagram"> @saborcaseiro_mossoro
+  </p>
+
+  <h3>Sabor Caseiro</h3>
+  <p>Mossoró · RN</p>
+  <div class="divider"></div>
+  <div class="rodape-info">
+    <div>🥗 Alimentação saudável</div>
+    <div>🌿 Ingredientes frescos</div>
+    <div>❤️ Feito com amor</div>
+  </div>
+  <p style="margin-top:24px; font-size:12px; color:rgba(255,255,255,0.4); letter-spacing:1px;">36 opções de marmitas fit</p>
+</div>
+
+  <!-- Barra Flutuante do Carrinho -->
+  <div id="barra-carrinho" class="barra-carrinho-fixa" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999; background: #e84b12; color: #ffffff; padding: 14px 16px; box-sizing: border-box; font-family: sans-serif; display: none !important; align-items: center; justify-content: space-between; gap: 12px; min-height: 75px; box-shadow: 0 -3px 15px rgba(0,0,0,0.2);">
+    
+    <div style="display: flex; align-items: center; gap: 8px; max-width: 45%;">
+      <span style="font-size: 26px;">🛒</span>
+      <div style="font-size: 11px; font-weight: bold; line-height: 1.2;">
+        <span id="contador-carrinho" style="background: #ffffff; color: #e84b12; padding: 3px 8px; border-radius: 4px; font-size: 15px; margin-right: 2px;">0</span> 
+        <span id="texto-tipo-item" style="text-transform: uppercase; letter-spacing: 0.3px;">marmita(s)</span>
+      </div>
+    </div>
+    
+    <div style="flex: 1; display: flex; justify-content: flex-end;">
+      <button class="btn-enviar-whats" onclick="enviarPedido()" style="border: none; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.25); border-radius: 8px; padding: 10px 14px; min-height: 54px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; width: 100%; max-width: 220px;">
+        Aguardando...
+      </button>
+    </div>
+
+  </div>
+  
+  
+
+
+
+
+  <!-- Botão Flutuante para Subir -->
+  <a href="#topo" class="btn-subir" title="Voltar ao topo">▲</a>
+
+<script>
+  let carrinho = {};
+
+  // =========================================================================
+  // CONFIGURAÇÕES GERAIS DOS SEUS KITS (Mude os links e chaves aqui)
+  // =========================================================================
+  const MINHA_CHAVE_PIX = "+5584988374837"; 
+
+  // Insira os links de Cartão que você gerou no RecargaPay
+  const LINK_CARTAO_TESTE = "https://recargapay.com.br/r/NQ4z40m"; // <-- ADICIONADO PARA O TESTE
+  const LINK_CARTAO_KIT10 = "https://recargapay.com.br/r/dpDaW8D"; // Preço R$ 150.00
+  const LINK_CARTAO_KIT15 = "https://recargapay.com.br/r/9X3WQJB"; // Preço R$ 217.50
+  const LINK_CARTAO_KIT30 = "https://recargapay.com.br/r/vAQYNZJ"; // Preço R$ 420.00
+
+  // Insira os nomes/links das imagens dos seus QR Codes Pix
+  const IMG_QRCODE_TESTE = "qrcode_teste.png"; // <-- ADICIONADO PARA O TESTE
+  const IMG_QRCODE_KIT10 = "qrcode10.png";
+  const IMG_QRCODE_KIT15 = "qrcode15.png";
+  const IMG_QRCODE_KIT30 = "qrcode30.png";
+  // =========================================================================
+
+  // Variáveis Globais de Controle de Fluxo
+  let limiteMarmitasKit = 10;       
+  let valorTotalCalculado = 150.00; 
+
+  // Função disparada quando o cliente altera o Kit no seletor do topo
+  function MudarDeKit() {
+    const select = document.getElementById('kit-selecionado');
+    limiteMarmitasKit = parseInt(select.value);
+    
+    // Define os preços fixos baseados na sua nova tabela comercial
+    if (limiteMarmitasKit === 1) valorTotalCalculado = 2.00; // <-- REGRA DO TESTE AQUI
+    else if (limiteMarmitasKit === 10) valorTotalCalculado = 150.00;
+    else if (limiteMarmitasKit === 15) valorTotalCalculado = 217.50;
+    else if (limiteMarmitasKit === 30) valorTotalCalculado = 420.00;
+    
+    atualizarBarraCarrinho();
+  }
+
+  // Função para mudar a quantidade de cada prato (Substitua a antiga por esta)
+  function alterarQtd(id, nome, alteracao, preco) {
+    if (!carrinho[id]) {
+      // Guarda o nome, a quantidade inicial zero e o preço original da planilha
+      carrinho[id] = { nome: nome, qtd: 0, precoExtra: preco || 0 };
+    }
+    
+    const card = document.getElementById('card-' + id);
+    if (card && card.classList.contains('indisponivel')) {
+      return;
+    }
+    
+    carrinho[id].qtd += alteracao;
+    
+    if (carrinho[id].qtd <= 0) {
+      delete carrinho[id];
+      document.getElementById('qtd-' + id).innerText = '0';
+      if(card) card.classList.remove('selecionado');
+    } else {
+      document.getElementById('qtd-' + id).innerText = carrinho[id].qtd;
+      if(card) card.classList.add('selecionado');
+    }
+    
+    atualizarBarraCarrinho();
+  }
+
+
+  // Monitora e atualiza a barra flutuante com travas inteligentes
+  function atualizarBarraCarrinho() {
+    let totalItensKit = 0;
+    let totalItensAvulsos = 0;
+    let valorAvulsos = 0;
+    let totalGeralItens = 0;
+    
+    for (let id in carrinho) {
+      totalGeralItens += carrinho[id].qtd;
+      if (carrinho[id].precoExtra > 0) {
+        totalItensAvulsos += carrinho[id].qtd;
+        valorAvulsos += (carrinho[id].qtd * carrinho[id].precoExtra);
+      } else {
+        totalItensKit += carrinho[id].qtd;
+      }
+    }
+    
+    const barra = document.getElementById('barra-carrinho');
+    const contador = document.getElementById('contador-carrinho');
+    const btnEnviar = barra ? barra.querySelector('.btn-enviar-whats') : null;
+    
+    if (totalGeralItens > 0) {
+      if (barra) barra.style.display = 'flex';
+      if (contador) contador.innerText = totalGeralItens;
+      
+      // LÓGICA DO TEXTO DINÂMICO: "marmita(s)" ou "item(ns)"
+      const textoTipoItem = document.getElementById('texto-tipo-item');
+      if (textoTipoItem) {
+        // Se só tem marmita (Kit) no carrinho
+        if (totalItensKit > 0 && totalItensAvulsos === 0) {
+          textoTipoItem.innerText = "marmita(s) selecionada(s)";
+        } 
+        // Se tem só itens avulsos OU uma mistura de kit com avulsos
+        else {
+          textoTipoItem.innerText = "item(ns) selecionado(s)";
+        }
+      }
+      
+      // Define se o carrinho é puramente de avulsos ou se tem Kits misturados
+      let precoFinalCalculado = 0;
+      let loteLiberado = false;
+      let mensagemBotao = "";
+      let corFundo = "#777777";
+      
+      if (totalItensKit > 0) {
+        // Fluxo de Validação do Kit de Marmitas
+        precoFinalCalculado = valorTotalCalculado + valorAvulsos;
+        
+        if (totalItensKit < limiteMarmitasKit) {
+          mensagemBotao = `Faltam ${limiteMarmitasKit - totalItensKit} un. p/ o Kit ${limiteMarmitasKit}`;
+        } else if (totalItensKit > limiteMarmitasKit) {
+          mensagemBotao = `Remova ${totalItensKit - limiteMarmitasKit} un. do Kit`;
+          corFundo = "#d32f2f";
+        } else {
+          loteLiberado = true;
+          mensagemBotao = `Fechar Pedido • R$ ${precoFinalCalculado.toFixed(2).replace('.', ',')}`;
+        }
+      } else {
+        // Fluxo de Validação de Itens 100% Avulsos (Mínimo R$ 30,00)
+        precoFinalCalculado = valorAvulsos;
+        const VALOR_MINIMO = 30.00;
+        
+        if (precoFinalCalculado < VALOR_MINIMO) {
+          mensagemBotao = `Falta R$ ${(VALOR_MINIMO - precoFinalCalculado).toFixed(2).replace('.', ',')} p/ mínimo`;
+        } else {
+          loteLiberado = true;
+          mensagemBotao = `Fechar Pedido • R$ ${precoFinalCalculado.toFixed(2).replace('.', ',')}`;
+        }
+      }
+      
+      // Gerencia a exibição da barra apenas quando houver itens
+      const barraGeral = document.getElementById('barra-carrinho');
+      let totalMarmitasNoCarrinho = 0;
+      for (let pratoId in carrinho) {
+        if (carrinho[pratoId].qtd > 0) {
+          totalMarmitasNoCarrinho += carrinho[pratoId].qtd;
+        }
+      }
+
+      if (barraGeral) {
+        if (totalMarmitasNoCarrinho === 0) {
+          barraGeral.style.setProperty('display', 'none', 'important');
+        } else {
+          barraGeral.style.setProperty('display', 'flex', 'important');
+        }
+      }
+
+      // Aplica as regras de estilo e quebra de linha no botão
+      if (btnEnviar) {
+        // Altera o nome de "Fechar Pedido" para "Enviar Pedido"
+        let textoTratado = mensagemBotao.replace("Fechar Pedido", "Enviar Pedido");
+        btnEnviar.innerHTML = textoTratado;
+        
+        // ESTILO DO TEXTO - TAMANHO AUMENTADO PARA DESTAQUE
+        btnEnviar.style.fontFamily = 'sans-serif';
+        btnEnviar.style.fontWeight = '900';
+        btnEnviar.style.fontSize = '13px'; // Aumentamos a fonte
+        btnEnviar.style.textTransform = 'uppercase';
+        btnEnviar.style.textAlign = 'center';
+        btnEnviar.style.lineHeight = '1.3';
+        btnEnviar.style.whiteSpace = 'normal'; // Permite quebrar em 2 linhas
+        btnEnviar.style.width = '100%';
+        btnEnviar.style.maxWidth = '100%';     // Destravado para preencher a área direita
+        
+        if (loteLiberado) {
+          // Disponível para Avançar
+          btnEnviar.style.background = '#ffffff';
+          btnEnviar.style.color = '#e84b12';
+          btnEnviar.style.pointerEvents = 'auto';
+          btnEnviar.setAttribute('onclick', 'abrirCheckoutInterno()');
+        } else {
+          // Bloqueado (Faltam itens)
+          btnEnviar.style.background = '#222222';
+          btnEnviar.style.color = '#ffffff';
+          btnEnviar.style.pointerEvents = 'none';
+          btnEnviar.removeAttribute('onclick');
+        }
+      }
+    } else {
+      const barraGeral = document.getElementById('barra-carrinho');
+      if (barraGeral) barraGeral.style.setProperty('display', 'none', 'important');
+    }
+  }
+
+  
+
+  // Inicia o slideshow automático na capa do restaurante
+  function iniciarSlideshowCapa() {
+    const slides = document.querySelectorAll('.bg-slide');
+    if (slides.length === 0) return;
+    
+    let slideAtual = 0;
+    setInterval(() => {
+      slides[slideAtual].classList.remove('ativo');
+      slideAtual = (slideAtual + 1) % slides.length;
+      slides[slideAtual].classList.add('ativo');
+    }, 4000); 
+  }
+
+  document.addEventListener('DOMContentLoaded', iniciarSlideshowCapa);
+  
+  // Abre o checkout e valida as informações finais do Kit
+  function abrirCheckoutInterno() {
+    let listaResumo = document.getElementById('lista-resumo-marmitas');
+    let textoResumo = "";
+    let totalItensKit = 0;
+    let valorAvulsos = 0;
+
+    // Passa o pente fino no carrinho: separa o que é Kit (precoExtra = 0) do que é Avulso
+    for (let pratoId in carrinho) {
+      if (carrinho[pratoId].qtd > 0) {
+        let item = carrinho[pratoId];
+        
+        if (item.precoExtra > 0) {
+          // É um item avulso (Salada/Bebida) -> Calcula o preço dele
+          valorAvulsos += (item.qtd * item.precoExtra);
+          textoResumo += `• ${item.nome} (${item.qtd}x) - <span style="color:#e84b12; font-weight:700;">R$ ${(item.qtd * item.precoExtra).toFixed(2).replace('.',',')}</span><br>`;
+        } else {
+          // É uma marmita do Kit
+          totalItensKit += item.qtd;
+          textoResumo += `• ${item.nome} (${item.qtd}x)<br>`;
+        }
+      }
+    }
+
+    // Se o cliente escolheu marmitas do Kit, usa o valor do Kit. Se não, o preço base do Kit é 0
+    let basePrecoKit = (totalItensKit > 0) ? valorTotalCalculado : 0;
+    let precoFinalTotal = basePrecoKit + valorAvulsos;
+
+    if (listaResumo) {
+      listaResumo.innerHTML = textoResumo || "Nenhum item selecionado.";
+    }
+
+    // Atualiza o texto do topo do resumo dizendo o que foi pedido
+    const campoTextoQuantidade = document.getElementById('texto-quantidade-resumo');
+    if (campoTextoQuantidade) {
+      if (totalItensKit > 0) {
+        campoTextoQuantidade.textContent = `Resumo do Pedido (Kit + Avulsos):`;
+      } else {
+        campoTextoQuantidade.textContent = `Resumo do Pedido (Itens Avulsos):`;
+      }
+    }
+
+    // Atualiza o valor verde de forma inteligente e correta!
+    const campoTotalModal = document.querySelector('#checkout-interno span[style*="#2e7d32"]') || document.querySelector('#checkout-interno span[style*="color"]');
+    if (campoTotalModal) {
+      campoTotalModal.textContent = `R$ ${precoFinalTotal.toFixed(2).replace('.', ',')}`;
+    }
+
+    // Abre a tela de finalização
+    document.getElementById('checkout-interno').style.display = 'block';
+    alternarTelasPagamento();
+
+    // Guarda o valor correto na memória para usarmos na geração do QR Code do Pix depois
+    window.valorFinalPedidoGlobal = precoFinalTotal;
+  }
+
+  function fecharCheckoutInterno() {
+    document.getElementById('checkout-interno').style.display = 'none';
+  }
+
+  // Alterna as instruções e entrega os links dinâmicos e fotos baseados no Kit definido
+  function alternarTelasPagamento() {
+    const metodo = document.querySelector('input[name="metodo-pagto"]:checked').value;
+    const areaInstrucoes = document.getElementById('instrucoes-pagamento');
+    const btnAcao = document.getElementById('btn-finalizar-checkout');
+    
+    const blocoPix = document.getElementById('bloco-pix-dinamico');
+    const blocoCartao = document.getElementById('bloco-cartao-dinamico');
+    const areaQrCode = document.getElementById('area-qrcode-10');
+    const imgQrCode = document.getElementById('imagem-qrcode');
+    const msgCartao = document.getElementById('mensagem-cartao-texto');
+
+    // Pega o valor real somado do pedido que guardamos na tela anterior
+    let valorFinal = window.valorFinalPedidoGlobal || valorTotalCalculado;
+    let linkCartaoAtual = "";
+    let ehValorFixo = false;
+
+    // LÓGICA DO CARTÃO: Verifica se o total bate com os seus links pré-definidos do RecargaPay
+    if (valorFinal === 150.00) { linkCartaoAtual = LINK_CARTAO_KIT10; ehValorFixo = true; }
+    else if (valorFinal === 217.50) { linkCartaoAtual = LINK_CARTAO_KIT15; ehValorFixo = true; }
+    else if (valorFinal === 420.00) { linkCartaoAtual = LINK_CARTAO_KIT30; ehValorFixo = true; }
+    else if (valorFinal === 2.00) { linkCartaoAtual = LINK_CARTAO_TESTE; ehValorFixo = true; }
+
+    if (metodo === 'pix') {
+      areaInstrucoes.style.borderLeftColor = "#2e7d32";
+      if (blocoPix) blocoPix.style.display = "block";
+      if (blocoCartao) blocoCartao.style.display = "none";
+      
+      // Remove o botão antigo de copiar chave se existir
+      const botaoCopiarAntigo = document.getElementById('btn-copiar-pix-dinamico');
+      if (botaoCopiarAntigo) botaoCopiarAntigo.remove();
+
+      // Mostra a chave Pix simples (Telefone)
+      const campoChave = document.getElementById('chave-pix-texto');
+      if (campoChave) {
+        campoChave.textContent = MINHA_CHAVE_PIX;
+        const btnCopiar = document.createElement('button');
+        btnCopiar.id = 'btn-copiar-pix-dinamico';
+        btnCopiar.innerHTML = "📋 Copiar Chave Simples (Telefone)";
+        btnCopiar.style.cssText = "display: block; margin: 8px auto 0 auto; background: #444444; color: #ffffff; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s;";
+        btnCopiar.setAttribute('onclick', "copiarChavePixAoClicar()");
+        campoChave.parentNode.insertBefore(btnCopiar, campoChave.nextSibling);
+      }
+
+      // ---------------------------------------------------------
+      // GERAÇÃO DO PIX DINÂMICO (QR CODE + COPIA E COLA)
+      // ---------------------------------------------------------
+      let brCode = "";
+      if (imgQrCode) {
+        const tlv = (id, value) => {
+          const len = value.length.toString().padStart(2, '0');
+          return `${id}${len}${value}`;
+        };
+
+        const payloadFormat = "000201";
+        const poiMethod = "010211";
+        const gui = tlv("00", "BR.GOV.BCB.PIX");
+        const key = tlv("01", MINHA_CHAVE_PIX);
+        const merchantAccount = tlv("26", gui + key);
+        const merchantCategory = "52040000";
+        const transactionCurrency = "5303986";
+        const transactionAmount = tlv("54", valorFinal.toFixed(2)); // <-- Valor Dinâmico Aqui!
+        const countryCode = "5802BR";
+        const merchantName = tlv("59", "SaborCaseiro"); // Limite de 25 caracteres, sem espaços longos
+        const merchantCity = tlv("60", "Mossoro");
+        
+        const txid = tlv("05", "***");
+        const additionalData = tlv("62", txid);
+
+        brCode = payloadFormat + poiMethod + merchantAccount + merchantCategory + transactionCurrency + transactionAmount + countryCode + merchantName + merchantCity + additionalData + "6304";
+
+        let crc = 0xFFFF;
+        for (let i = 0; i < brCode.length; i++) {
+          crc ^= brCode.charCodeAt(i) << 8;
+          for (let j = 0; j < 8; j++) {
+            if ((crc & 0x8000) !== 0) crc = (crc << 1) ^ 0x1021;
+            else crc <<= 1;
+          }
+        }
+        crc = (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+        brCode += crc;
+        
+        imgQrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(brCode)}`;
+      }
+
+      if (areaQrCode) {
+        areaQrCode.style.display = "block";
+        
+        // CRIA A CAIXA DO COPIA E COLA LOGO ABAIXO DO QR CODE
+        let containerCopiaCola = document.getElementById('box-copia-cola-pix');
+        if (!containerCopiaCola) {
+          containerCopiaCola = document.createElement('div');
+          containerCopiaCola.id = 'box-copia-cola-pix';
+          containerCopiaCola.style.cssText = "margin-top: 15px; padding: 10px; background: #f4f4f4; border-radius: 8px; border: 1px dashed #ccc;";
+          areaQrCode.parentNode.insertBefore(containerCopiaCola, areaQrCode.nextSibling);
+        }
+        containerCopiaCola.innerHTML = `
+          <p style="font-size: 12px; color: #333; margin: 0 0 8px 0; font-weight: bold; text-align: center;">Ou pague usando o Pix Copia e Cola:</p>
+          <textarea id="texto-pix-copia-cola" readonly style="width: 100%; height: 55px; font-size: 10px; padding: 6px; border: 1px solid #ddd; border-radius: 4px; resize: none; color: #666; font-family: monospace; box-sizing: border-box;">${brCode}</textarea>
+          <button onclick="copiarPixCopiaECola()" style="margin-top: 8px; background: #e84b12; color: #fff; border: none; padding: 10px; font-size: 14px; font-weight: 900; border-radius: 6px; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">📄 Copiar Código de Pagamento</button>
+        `;
+      }
+      
+      btnAcao.innerHTML = "🔒 Concluir Pedido e Enviar Comprovante";
+      btnAcao.style.background = "#2e7d32";
+      btnAcao.setAttribute('onclick', `processarVendaFinal('Pix', '${MINHA_CHAVE_PIX}', '')`);
+
+      const btnReiniciar = document.getElementById('btn-reabrir-cartao-erro');
+      if (btnReiniciar) btnReiniciar.remove();
+
+    } else {
+      // ---------------------------------------------------------
+      // CARTÃO DE CRÉDITO: FLUXO FIXO OU PERSONALIZADO (WHATSAPP)
+      // ---------------------------------------------------------
+      areaInstrucoes.style.borderLeftColor = "#ff5722";
+      if (blocoPix) blocoPix.style.display = "none";
+      if (blocoCartao) blocoCartao.style.display = "block";
+
+      if (ehValorFixo) {
+        msgCartao.innerHTML = `O valor do seu pedido é <strong>R$ ${valorFinal.toFixed(2).replace('.', ',')}</strong>.<br>Ao clicar no botão abaixo, você abrirá o link seguro do <strong>RecargaPay</strong> para realizar o pagamento.`;
+        btnAcao.innerHTML = `💳 Ir para Pagamento Seguro (R$ ${valorFinal.toFixed(2).replace('.', ',')})`;
+        btnAcao.style.background = "#ff5722";
+        btnAcao.setAttribute('onclick', `processarVendaFinal('Cartão/Alimentação', '', '${linkCartaoAtual}')`);
+      } else {
+        msgCartao.innerHTML = `Seu pedido contém itens variados totalizando <strong>R$ ${valorFinal.toFixed(2).replace('.', ',')}</strong>.<br>Clique no botão abaixo para nos enviar os dados. <strong>Nós geraremos o link de pagamento exato e enviaremos no seu WhatsApp!</strong>`;
+        btnAcao.innerHTML = `📲 Solicitar Link de Pagamento (R$ ${valorFinal.toFixed(2).replace('.', ',')})`;
+        btnAcao.style.background = "#ff5722";
+        btnAcao.setAttribute('onclick', `processarVendaFinal('Cartão (Link via WhatsApp)', '', '')`);
+      }
+
+      const btnReiniciar = document.getElementById('btn-reabrir-cartao-erro');
+      if (btnReiniciar) btnReiniciar.remove();
+    }
+  }
+
+  // Função global ativada pelo botão "Copiar Código de Pagamento"
+  window.copiarPixCopiaECola = function() {
+    const textArea = document.getElementById('texto-pix-copia-cola');
+    if (textArea) {
+      textArea.select();
+      document.execCommand('copy');
+      alert("✅ Código Copia e Cola copiado com sucesso!\n\nAgora abra o aplicativo do seu banco, vá na área Pix, escolha 'Pix Copia e Cola' e cole o código.");
+    }
+  };
+
+
+  // =========================================================================
+  // GERA O RELATÓRIO, SALVA NA PLANILHA E ENCAMINHA PARA O WHATSAPP
+  // =========================================================================
+  function processarVendaFinal(metodoEscolhido, chavePix, linkCartao) {
+    const nome = document.getElementById('chk-nome').value.trim();
+    const endereco = document.getElementById('chk-endereco').value.trim();
+    const referencia = document.getElementById('chk-referencia').value.trim();
+    
+    // NOVA LINHA: Captura o WhatsApp do novo input
+    const whatsapp = document.getElementById('chk-whatsapp') ? document.getElementById('chk-whatsapp').value.trim() : "";
+
+    // ALTERAÇÃO: Agora valida se o WhatsApp também foi preenchido
+    if (!nome || !endereco || !referencia || !whatsapp) {
+      alert("⚠️ Por favor, preencha seu Nome, Endereço, Ponto de Referência e seu WhatsApp antes de finalizar.");
+      return;
+    }
+
+    // NOVA LINHA: Gera o ID único do pedido automaticamente
+    const idPedido = "PED-" + new Date().getTime().toString().slice(-8);
+
+    // Junta a rua e a referência em um texto só para a planilha
+    const enderecoCompleto = `${endereco} (Ref: ${referencia})`;
+
+    const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSftBNz3fdP_2E3UDNjXrAJdi-CcUT206xo7xWHCZ_c6_efLwQ/formResponse";
+    
+    // Calcula o que de fato tem no carrinho para atualizar a Planilha e o Zap
+    let valorFinal = window.valorFinalPedidoGlobal || valorTotalCalculado;
+    let qtdKits = 0;
+    let qtdAvulsos = 0;
+    for (let pratoId in carrinho) {
+      if (carrinho[pratoId].qtd > 0) {
+        if (carrinho[pratoId].precoExtra > 0) qtdAvulsos += carrinho[pratoId].qtd;
+        else qtdKits += carrinho[pratoId].qtd;
+      }
+    }
+    
+    let stringModeloEscolhido = "";
+    if (qtdKits > 0 && qtdAvulsos > 0) stringModeloEscolhido = `Kit ${limiteMarmitasKit} + Itens Avulsos`;
+    else if (qtdKits > 0 && qtdAvulsos === 0) stringModeloEscolhido = `Kit ${limiteMarmitasKit} Marmitas`;
+    else stringModeloEscolhido = "Apenas Itens Avulsos";
+
+    // -------------------------------------------------------------------------
+    // 💳 CONTROLE FLUXO RECARGAPAY (VALOR FIXO)
+    // -------------------------------------------------------------------------
+    if (metodoEscolhido === 'Cartão/Alimentação' && linkCartao) {
+      const formDataCartao = new URLSearchParams();
+      formDataCartao.append('entry.1010669223', nome);
+      formDataCartao.append('entry.1958230588', idPedido); // CORRIGIDO: Código real do ID do Pedido
+      formDataCartao.append('entry.1927850346', whatsapp);  // CORRIGIDO: Código real do WhatsApp
+      formDataCartao.append('entry.726714487', 'Cartão/Alimentação');
+      formDataCartao.append('entry.411712632', stringModeloEscolhido);
+      formDataCartao.append('entry.2116660520', `R$ ${valorFinal.toFixed(2)}`);
+      formDataCartao.append('entry.1998062869', 'Link do RecargaPay Aberto');
+      formDataCartao.append('entry.228551777', enderecoCompleto); 
+
+      fetch(formUrl, { method: 'POST', mode: 'no-cors', body: formDataCartao });
+      window.open(linkCartao, '_blank');
+      
+      const msgCartao = document.getElementById('mensagem-cartao-texto');
+      if (msgCartao) {
+        msgCartao.innerHTML = `
+          <div style="margin-top: 5px; padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; text-align: left;">
+            <p style="margin: 0 0 5px 0; font-size: 13px; color: #856404; font-weight: bold; line-height: 1.3;">
+              🔄 Aba de pagamento aberta!
+            </p>
+            <p style="margin: 0 0 8px 0; font-size: 12px; color: #856404; line-height: 1.3;">
+              Realize a transação na página do RecargaPay e, assim que terminar, clique no <strong>botão verde abaixo</strong> para nos enviar os dados do seu pedido pelo WhatsApp.
+            </p>
+            <p style="margin: 0; font-size: 11px; color: #a14100; border-top: 1px dashed #ffc107; padding-top: 5px; line-height: 1.3;">
+              ⚠️ <strong>Fechou a janela sem querer?</strong> <a href="${linkCartao}" target="_blank" style="color: #d32f2f; font-weight: bold; text-decoration: underline;">Clique aqui para abrir a página de pagamento novamente</a>.
+            </p>
+          </div>
+        `;
+      }
+      
+      const btnAcao = document.getElementById('btn-finalizar-checkout');
+      if (btnAcao) {
+        btnAcao.innerHTML = "✅ Enviar Pedido e Comprovante para o WhatsApp";
+        btnAcao.style.background = "#2e7d32";
+        btnAcao.setAttribute('onclick', `processarVendaFinal('Cartão/Alimentação', '', '')`);
+
+        if (!document.getElementById('btn-reabrir-cartao-erro')) {
+          const btnErro = document.createElement('button');
+          btnErro.id = 'btn-reabrir-cartao-erro';
+          btnErro.innerHTML = "❌ Não conseguiu pagar? Tentar Novamente";
+          btnErro.style.cssText = "margin-top: 10px; width: 100%; background: #ff5722; color: #fff; border: none; padding: 8px; font-size: 12px; font-weight: bold; border-radius: 8px; cursor: pointer;";
+          btnErro.setAttribute('onclick', "alternarTelasPagamento()");
+          btnAcao.parentNode.insertBefore(btnErro, btnAcao.nextSibling);
+        }
+      }
+      return; 
+    }
+
+    const btnReiniciar = document.getElementById('btn-reabrir-cartao-erro');
+    if (btnReiniciar) btnReiniciar.remove();
+
+    // -------------------------------------------------------------------------
+    // 📝 MONTAGEM DA MENSAGEM DO WHATSAPP (MISTURANDO KIT + AVULSOS)
+    // -------------------------------------------------------------------------
+    let texto = "*🥗✔️ NOVO PEDIDO CONFIRMADO — SABOR CASEIRO*\n";
+    texto += "----------------------------------------\n\n";
+    
+    texto += `🆔 *ID do Pedido:* ${idPedido}\n`; // NOVA LINHA: ID no Zap
+    texto += `👤 *Cliente:* ${nome}\n`;
+    texto += `📱 *WhatsApp:* ${whatsapp}\n`; // NOVA LINHA: Zap na mensagem
+    texto += `📍 *Endereço:* ${endereco}\n`;
+    texto += `📌 *Referência:* ${referencia}\n`;
+    texto += `💳 *Forma de Pagamento:* ${metodoEscolhido}\n`;
+    texto += `🎯 *Formato do Pedido:* ${stringModeloEscolhido}\n\n`;
+
+    texto += "📦 *Opções Selecionadas:*\n";
+    
+    for (let pratoId in carrinho) {
+      let item = carrinho[pratoId];
+      if (item.qtd > 0) {
+        if (item.precoExtra > 0) {
+          texto += `• [AVULSO] ${item.nome} (${item.qtd}x) - R$ ${(item.qtd * item.precoExtra).toFixed(2)}\n`;
+        } else {
+          texto += `• [KIT] Opção ${String(pratoId).padStart(2,'0')} - ${item.nome} (${item.qtd}x)\n`;
+        }
+      }
+    }
+
+    texto += `\n💰 *Total do Pedido:* R$ ${valorFinal.toFixed(2)}\n\n`;
+    texto += "----------------------------------------\n";
+    texto += "⏳ _Aguardando confirmação, preparo e definição do dia da entrega._\n\n";
+    
+    if (metodoEscolhido === 'Pix') {
+      texto += "📲 *Abaixo segue o comprovante de transferência do Pix.*";
+    } else if (metodoEscolhido.includes('WhatsApp')) {
+      texto += "📲 *Por favor, me envie o link de pagamento no valor exato do meu pedido!*";
+    } else {
+      texto += "📲 *Abaixo segue a confirmação da transação do cartão.*";
+    }
+
+    const numeroWhatsapp = "558496602081"; 
+    const url = "https://api.whatsapp.com/send?phone=" + numeroWhatsapp + "&text=" + encodeURIComponent(texto);
+
+    // -------------------------------------------------------------------------
+    // 🚀 ENVIO SEGURO PARA A PLANILHA E ABERTURA DO ZAP
+    // -------------------------------------------------------------------------
+    if (metodoEscolhido === 'Cartão/Alimentação' && !linkCartao) {
+      window.open(url, '_blank');
+      return; 
+    }
+
+    const formData = new URLSearchParams();
+    formData.append('entry.1010669223', nome); 
+    formData.append('entry.1958230588', idPedido); // CORRIGIDO: Código real do ID do Pedido
+    formData.append('entry.1927850346', whatsapp); // CORRIGIDO: Código real do WhatsApp
+    formData.append('entry.726714487', metodoEscolhido || 'Não informado');
+    formData.append('entry.411712632', stringModeloEscolhido); 
+    formData.append('entry.2116660520', `R$ ${valorFinal.toFixed(2)}`); 
+    formData.append('entry.228551777', enderecoCompleto); 
+    
+    const statusAtual = (metodoEscolhido === 'Pix') ? 'Aguardando Comprovante (Pix)' : 'Aguardando Conferência (Cartão)';
+    formData.append('entry.1998062869', statusAtual); 
+
+    fetch(formUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData
+    })
+    .then(() => window.open(url, '_blank'))
+    .catch((error) => window.open(url, '_blank'));
+  }
+
+
+      // ... outros códigos que você já tem no arquivo ...
+
+    // =========================================================================
+    // FUNÇÕES DE CÓPIA DO PIX (Cole bem aqui, antes do fechamento do script)
+    // =========================================================================
+    function copiarChavePixAoClicar() {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(MINHA_CHAVE_PIX).then(() => {
+          aplicarSucessoBotaoCopiar();
+        }).catch(err => {
+          executarCopiaMetodoAntigo();
+        });
+      } else {
+        executarCopiaMetodoAntigo();
+      }
+    }
+
+    function executarCopiaMetodoAntigo() {
+      try {
+        const inputTemporario = document.createElement("input");
+        inputTemporario.value = MINHA_CHAVE_PIX;
+        inputTemporario.style.position = "absolute";
+        inputTemporario.style.left = "-9999px";
+        document.body.appendChild(inputTemporario);
+        
+        inputTemporario.select();
+        inputTemporario.setSelectionRange(0, 99999);
+        
+        document.execCommand("copy");
+        document.body.removeChild(inputTemporario);
+        
+        aplicarSucessoBotaoCopiar();
+      } catch (err) {
+        alert("Não foi possível copiar automaticamente. Chave Pix: " + MINHA_CHAVE_PIX);
+      }
+    }
+
+    function aplicarSucessoBotaoCopiar() {
+      const btnCopiar = document.getElementById('btn-copiar-pix-dinamico');
+      if (btnCopiar) {
+        btnCopiar.innerHTML = "✅ Chave Copiada!";
+        btnCopiar.style.background = "#2e7d32";
+        
+        setTimeout(() => {
+          if (document.getElementById('btn-copiar-pix-dinamico')) {
+            btnCopiar.innerHTML = "📋 Copiar Chave Pix (Telefone)";
+            btnCopiar.style.background = "#444444";
+          }
+        }, 3000);
+      }
+    }
+    // =========================================================================
+
+function enviarPedidoParaPlanilha(dadosPedido) {
+  // Link oficial de recebimento do seu formulário do Google
+  const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdO70z8bZfL7-P7w1SThX6u5D6wZzV8wV2wV2wV2wV2wV2w/formResponse";
+  
+  // Empacota os dados do site direto nas caixas certas do formulário
+  const formData = new URLSearchParams();
+  formData.append('entry.1356715694', dadosPedido.cliente);    // Campo: cliente
+  formData.append('entry.67622830', dadosPedido.formaPagto);  // Campo: formaPagto
+  formData.append('entry.2060155490', dadosPedido.kit);        // Campo: kit
+  formData.append('entry.1843231454', dadosPedido.valor);       // Campo: valor
+  formData.append('entry.228551777', dadosPedido.endereco);    // Campo: endereco (NOVA LINHA)
+
+  // Envia os dados em segundo plano
+  fetch(formUrl, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: formData
+  })
+  .then(() => {
+    console.log('Pedido registrado na planilha Gestor Sabor Caseiro!');
+    // Chama a sua função que envia a mensagem para o WhatsApp do cliente
+    redirecionarParaWhatsApp(dadosPedido);
+  })
+  .catch((error) => {
+    console.error('Erro ao salvar dados, mas enviando WhatsApp:', error);
+    // Garante que mesmo se a internet oscilar, o cliente vá para o WhatsApp
+    redirecionarParaWhatsApp(dadosPedido);
+  });
+}
+
+
+</script>
+
+
+</script>
+
+<script>
+  // Registra o mecanismo de funcionamento Offline (Service Worker)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Cardápio pronto para uso offline!'))
+        .catch(err => console.log('Erro ao configurar offline', err));
+    });
+  }
+</script>
+
+
+<!-- ===== SEÇÃO INTERNA DE PAGAMENTO E ENTREGA ===== -->
+<div id="checkout-interno" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f5f5f5; z-index: 9999; overflow-y: auto; font-family: sans-serif; padding: 20px; box-sizing: border-box;">
+  
+  <!-- Cabeçalho da Tela -->
+  <div style="background: var(--laranja, #ff5722); color: #fff; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; position: relative;">
+    <button onclick="fecharCheckoutInterno()" style="position: absolute; left: 15px; top: 15px; background: none; border: none; color: #fff; font-size: 18px; font-weight: bold; cursor: pointer;">➔ Voltar</button>
+    <h2 style="margin: 0; font-size: 20px;">Finalizar seu Kit Fit</h2>
+  </div>
+
+  <!-- Resumo Prático do Pedido -->
+  <div style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <h3 style="margin-top: 0; color: #333; font-size: 16px;">🛒 Resumo do Pedido</h3>
+    <div id="lista-resumo-marmitas" style="font-size: 14px; color: #666; line-height: 1.6;"></div>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+    <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; color: #333;">
+      <span id="texto-quantidade-resumo">Total do Kit:</span>
+      <span style="color: #2e7d32;">R$ 140,00</span>
+    </div>
+  </div>
+
+  <!-- Formulário de Endereço -->
+  <div style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <h3 style="margin-top: 0; color: #333; font-size: 16px;">🚚 Dados para Entrega</h3>
+    <input type="text" id="chk-nome" placeholder="Seu Nome Completo" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+    <input type="text" id="chk-endereco" placeholder="Endereço (Rua, Número, Bairro)" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+    <input type="text" id="chk-referencia" placeholder="Ponto de Referência (Opcional)" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+    <input type="tel" id="chk-whatsapp" placeholder="Seu WhatsApp (apenas números)" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+  </div>
+
+  <!-- Opções de Pagamento (RecargaPay) -->
+  <div style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <h3 style="margin-top: 0; color: #333; font-size: 16px;">💳 Método de Pagamento</h3>
+    
+    <label style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; cursor: pointer;">
+      <input type="radio" name="metodo-pagto" value="pix" checked onchange="alternarTelasPagamento()">
+      <div style="font-size: 15px; font-weight: bold; color: #333;">Pix <span style="font-size: 11px; color: #2e7d32; font-weight: normal;">(Aprovação Imediata)</span></div>
+    </label>
+
+    <label style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+      <input type="radio" name="metodo-pagto" value="cartao" onchange="alternarTelasPagamento()">
+      <div style="font-size: 15px; font-weight: bold; color: #333;">Cartão de Crédito / Débito / Vale Alimentação</div>
+    </label>
+
+     <!-- Área de Instrução Dinâmica configurada para links e QR Code -->
+    <div id="instrucoes-pagamento" style="margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 6px; border-left: 4px solid #2e7d32; font-size: 13px; color: #444; line-height: 1.5;">
+      
+<!-- Bloco do Pix (Aparece quando escolhe Pix) -->
+<div id="bloco-pix-dinamico">
+  <strong>Chave PIX (SumUp):</strong><br>
+  <span id="chave-pix-texto" style="font-family: monospace; font-size: 14px; background: #eee; padding: 4px 6px; display: inline-block; margin: 5px 0; word-break: break-all; border-radius: 4px; font-weight: bold;">SUA_CHAVE_AQUI</span>
+  
+  <!-- Área do QR Code Dinâmico e Automático -->
+  <div id="area-qrcode-10" style="margin-top: 10px; text-align: center; display: none;">
+    <p style="margin: 5px 0; color: #555;">Abra o app do seu banco e escaneie o QR Code abaixo:</p>
+    <!-- O src abaixo agora gera o QR Code na hora com a sua chave da SumUp -->
+<img src="" id="imagem-qrcode" alt="QR Code Pix" style="max-width: 180px; border: 1px solid #ddd; padding: 5px; background: #fff; border-radius: 4px;">
+  </div>
+</div>
+
+
+      <!-- Bloco do Cartão (Aparece quando escolhe Cartão) -->
+      <div id="bloco-cartao-dinamico" style="display: none;">
+        <span id="mensagem-cartao-texto"></span>
+      </div>
+
+    </div>
+
+  <!-- Botão de Ação Principal -->
+  <button id="btn-finalizar-checkout" onclick="processarVendaFinal()" style="width: 100%; background: #2e7d32; color: #fff; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    🔒 Concluir Pedido e Pagar via Pix
+  </button>
+
+</div>
+
+<script>
+  const PLANILHA_ID = '1pPl-wXmW_enh7jYF1bT6EhaukBUWyACF6Xo-yoviMPM';
+  const urlCardapio = `https://docs.google.com/spreadsheets/d/${PLANILHA_ID}/gviz/tq?tqx=out:json&sheet=Cardapio`;
+  const urlCategorias = `https://docs.google.com/spreadsheets/d/${PLANILHA_ID}/gviz/tq?tqx=out:json&sheet=Config_Categorias`;
+  const urlVisual = `https://docs.google.com/spreadsheets/d/${PLANILHA_ID}/gviz/tq?tqx=out:json&sheet=Config_Visual`;
+
+  Promise.all([
+    fetch(urlVisual).then(res => res.text()),
+    fetch(urlCategorias).then(res => res.text()),
+    fetch(urlCardapio).then(res => res.text())
+  ])
+  .then(([dadosVisual, dadosCategorias, dadosCardapio]) => {
+    
+    // 1. CARREGA CONFIGURAÇÕES VISUAIS
+    const jsonTextVis = dadosVisual.substring(47, dadosVisual.length - 2);
+    const configVisual = {};
+    JSON.parse(jsonTextVis).table.rows.forEach(linha => {
+      const item = linha.c[0]?.v.trim();
+      const valor = linha.c[1]?.v.toString().trim();
+      if (item) configVisual[item] = valor;
+    });
+
+    // Aplica cores globais
+    document.documentElement.style.setProperty('--verde-escuro', configVisual.Cor_Principal || '#3a6e10');
+    document.documentElement.style.setProperty('--laranja', configVisual.Cor_Destaque || '#e84b12');
+
+    // 2. MAPA DE SUBTÍTULOS
+    const mapaSubtitulos = {};
+    JSON.parse(dadosCategorias.substring(47, dadosCategorias.length - 2)).table.rows.forEach(linha => {
+      mapaSubtitulos[linha.c[0]?.v.trim()] = linha.c[1]?.v;
+    });
+
+    // 3. MONTA O CARDÁPIO (Substitua a partir daqui)
+    const containerGeral = document.getElementById('categorias-container');
+    containerGeral.innerHTML = ''; 
+
+    let categoriaAtual = '';
+    let secaoHtml = '';
+
+    // Pega as linhas da planilha e ordena: primeiro itens sem preço (Kits), depois avulsos por ordem alfabética
+    const linhasOrdenadas = JSON.parse(dadosCardapio.substring(47, dadosCardapio.length - 2)).table.rows;
+    
+    linhasOrdenadas.sort((a, b) => {
+      let precoA = parseFloat(a.c[6]?.v || 0);
+      let precoB = parseFloat(b.c[6]?.v || 0);
+      let catA = (a.c[3]?.v || 'Outros').trim();
+      let catB = (b.c[3]?.v || 'Outros').trim();
+      
+      // Se um é kit (preco == 0) e o outro é avulso, o kit vai para cima
+      if (precoA === 0 && precoB > 0) return -1;
+      if (precoA > 0 && precoB === 0) return 1;
+      
+      // Se ambos são do mesmo tipo, ordena alfabeticamente pela categoria
+      return catA.localeCompare(catB);
+    });
+
+    linhasOrdenadas.forEach(linha => {
+      const id = linha.c[0]?.v || '';
+      const nome = linha.c[1]?.v || '';
+      const acomps = linha.c[2]?.v || '';
+      let categoria = (linha.c[3]?.v || 'Outros').trim();
+      const fotoUrl = linha.c[4]?.v || ''; 
+      const disponivel = (linha.c[5]?.v || 'Sim').trim().toLowerCase(); // Coluna F
+      
+      let precoVal = 0;
+      if (linha.c[6] && linha.c[6].v !== null) {
+        precoVal = parseFloat(linha.c[6].v) || 0;
+      }
+      
+      if (!nome || id === 'ID') return;
+
+      if (categoria !== categoriaAtual) {
+        categoriaAtual = categoria;
+        const subtitulo = mapaSubtitulos[categoriaAtual] || 'Sabor, nutrição e equilíbrio';
+        
+        // Esta linha cria o ID dinâmico (Ex: "Kit Fit" vira "kit-fit")
+        const categoriaId = categoriaAtual.toLowerCase().replace(/\s+/g, '-');
+
+        secaoHtml += `</div></div>
+          <div class="categoria-secao" id="${categoriaId}" style="margin-top:40px;">
+            <div class="secao-titulo" style="text-align: center; margin-bottom: 40px;">
+              <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--verde-escuro); margin-bottom: 6px;">${categoriaAtual}</h3>
+              <div class="secao-titulo-linha" style="display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--laranja); font-size: 13px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">
+                 <span style="width: 40px; height: 2px; background: var(--laranja);"></span>
+                 ${subtitulo}
+                 <span style="width: 40px; height: 2px; background: var(--laranja);"></span>
+              </div>
+            </div>
+            <div class="pratos-grid">`;
+      }
+
+
+      // Verificação de Item Esgotado
+      const ehEsgotado = (disponivel === 'não');
+      
+      const styleCard = `
+        background-color: ${configVisual.Card_BG_Color || '#ffffff'};
+        border: 2px solid ${ehEsgotado ? '#999999' : (configVisual.Card_Border_Color || '#5a9e1a')};
+        font-family: ${configVisual.Card_Font_Family || 'sans-serif'};
+        color: ${ehEsgotado ? '#999999' : (configVisual.Card_Text_Color || '#333')};
+        background-image: ${configVisual.Card_BG_Image_Url ? `url('${configVisual.Card_BG_Image_Url}')` : 'none'};
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: relative;
+        ${ehEsgotado ? 'opacity: 0.6; pointer-events: none;' : ''}
+      `;
+
+      const acompsHtml = acomps.split(',').map(a => `<span>${a.trim()}</span>`).join('');
+      const numero = String(id).padStart(2, '0');
+
+      const etiquetaHeader = (precoVal > 0)
+        ? `<div style="font-size: 10px; letter-spacing: 2px; font-family: ${configVisual.Card_Font_Family}">${categoria.toUpperCase()}</div>`
+        : `<div style="font-size: 10px; letter-spacing: 2px; font-family: ${configVisual.Card_Font_Family}">MARMITA FIT • OPÇÃO ${numero}</div>`;
+
+      const textoPrecoExibir = (precoVal > 0) 
+        ? `<div class="preco-item-layout" style="font-weight: 800; color: var(--laranja); margin-top: 5px;">R$ ${precoVal.toFixed(2).replace('.', ',')}</div>` 
+        : '';
+
+      // Faixa vermelha de esgotado se aplicável
+const faixaEsgotadoHtml = ehEsgotado 
+  ? `<div style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: #d32f2f; color: #fff; font-weight: 900; padding: 4px 18px; font-size: 13px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10; letter-spacing: 2px;">ESGOTADO</div>`
+  : '';
+
+
+      secaoHtml += `
+        <div class="prato-card ${ehEsgotado ? 'indisponivel' : ''}" id="card-${id}" style="${styleCard}">
+          ${faixaEsgotadoHtml}
+          ${fotoUrl ? `<div class="prato-foto-container" style="${ehEsgotado ? 'filter: grayscale(100%);' : ''}"><img src="${fotoUrl}" alt="${nome}"></div>` : ''}
+          <div class="etiqueta-conteudo">
+            <div class="etiqueta-header" style="border-bottom: 2px dashed ${ehEsgotado ? '#999' : (configVisual.Card_Border_Color || 'var(--verde-escuro)')}; padding-bottom: 8px; margin-bottom: 5px; text-align: center;">
+              ${etiquetaHeader}
+            </div>
+            <div class="prato-nome" style="font-family: ${configVisual.Card_Font_Family}; font-size: 22px; font-weight: 900; text-align: center;">${nome}</div>
+            <div class="prato-acomp">${acompsHtml}</div>
+            ${textoPrecoExibir}
+            <div class="seletor-pedido" style="${ehEsgotado ? 'display:none;' : ''}">
+              <button class="btn-qtd" onclick="alterarQtd('${id}', '${nome}', -1, ${precoVal})">-</button>
+              <span class="numero-qtd" id="qtd-${id}">0</span>
+              <button class="btn-qtd" onclick="alterarQtd('${id}', '${nome}', 1, ${precoVal})">+</button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    containerGeral.innerHTML = secaoHtml + '</div></div>';
+
+  })
+  .catch(err => console.error("Erro ao carregar cardápio:", err));
+</script>
+
+
+
+
+</body>
+</html>
