@@ -270,6 +270,32 @@
 
 </head>
 <body>
+<style>
+  @keyframes pulsarBotao {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+  #instalar-container {
+    animation: pulsarBotao 2s infinite ease-in-out;
+  }
+</style>
+
+<div id="instalar-container" style="display: none; width: 100%; padding: 12px 0; background: linear-gradient(to bottom, rgba(255, 112, 67, 0.65) 0%, rgba(255, 87, 34, 0.65) 50%, rgba(230, 74, 25, 0.65) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: white; text-align: center; cursor: pointer; font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-bottom: 1px solid rgba(216, 67, 21, 0.4); position: absolute; top: 0; left: 0; z-index: 9999; margin: 0; transition: all 0.3s ease;">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+    <!-- Ícone de Download em vetor (SVG) -->
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+    <span style="text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6); letter-spacing: 0.5px;">Instalar App Sabor Caseiro</span>
+  </div>
+</div>
+
+
+
+
 <div id="topo"></div>
 
 
@@ -1357,6 +1383,38 @@ const faixaEsgotadoHtml = ehEsgotado
 </script>
 
 
+<script>
+  let deferredPrompt;
+  const btnInstalar = document.getElementById('instalar-container');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Impede o navegador de mostrar o prompt padrão (aquelas notificações chatas)
+    e.preventDefault();
+    // Guarda o evento para usar depois
+    deferredPrompt = e;
+    // Mostra o seu botão personalizado
+    btnInstalar.style.display = 'block';
+  });
+
+  btnInstalar.addEventListener('click', (e) => {
+    // Esconde o botão após o clique
+    btnInstalar.style.display = 'none';
+    // Mostra o prompt oficial de instalação do Chrome
+    deferredPrompt.prompt();
+    // Verifica a escolha do usuário
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('Usuário aceitou a instalação');
+      }
+      deferredPrompt = null;
+    });
+  });
+
+  // Esconde o botão se o app já estiver instalado
+  window.addEventListener('appinstalled', (evt) => {
+    btnInstalar.style.display = 'none';
+  });
+</script>
 
 
 </body>
